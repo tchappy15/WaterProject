@@ -13,7 +13,21 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<WaterDbContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("WaterConnection")));
 
-builder.Services.AddCors(); //Cors allows us to get requests from specific origins
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000")
+                .AllowCredentials() //so that cookies will get added
+                .AllowAnyHeader() 
+                .AllowAnyMethod();
+        }
+        );
+
+}
+
+); //Cors allows us to get requests from specific origins
 
 var app = builder.Build();
 
@@ -24,7 +38,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors(x => x.WithOrigins("http://localhost:3000"));
+app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
 
