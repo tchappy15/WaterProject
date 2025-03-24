@@ -48,11 +48,18 @@ namespace WaterProject.API.Controllers
             return Ok(someObject); //returning a json object
         }
 
-        [HttpGet("FunctionalProjects")]
-        public IEnumerable<Project> GetFunctionalProjects()
+
+        //building a 2nd route that gets just a list of categories. For our filter
+        [HttpGet("GetProjectTypes")]
+        public IActionResult GetProjectTypes ()
         {
-            var something = _waterContext.Projects.Where(p => p.ProjectFunctionalityStatus == "Functional").ToList();
-            return something;
+            var projectTypes = _waterContext.Projects
+                .Select(p => p.ProjectType)
+                .Distinct()
+                .ToList();
+
+            return Ok(projectTypes);
         }
+
     }
 }
