@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Project } from "./types/Project";
+import { Project } from "../types/Project";
+import { useNavigate } from "react-router-dom";
 
 function ProjectList({selectedCategories}: {selectedCategories: string[]}) {
     //we want to use the Project object to store the data as it comes in
@@ -16,6 +17,8 @@ function ProjectList({selectedCategories}: {selectedCategories: string[]}) {
     const[totalItems, setTotalItems] = useState<number>(0);
 
     const[totalPages, setTotalPages] = useState<number>(0);
+
+    const navigate = useNavigate();
 
     useEffect(() => { //useEffect only goes and gets data when needed instead of all the time
         const fetchProjects = async() => {
@@ -68,6 +71,11 @@ function ProjectList({selectedCategories}: {selectedCategories: string[]}) {
                             <strong>Project Status: </strong>
                             {p.projectFunctionalityStatus}</li>
                     </ul>
+
+                    <button className="btn btn-success" 
+                    onClick={() => navigate(`/donate/${p.projectName}/${p.projectId}`)}> {/*pass in the project name for whichever one we clicked donate for */}
+                        Donate
+                    </button>
                     </div>
                 </div>
         
