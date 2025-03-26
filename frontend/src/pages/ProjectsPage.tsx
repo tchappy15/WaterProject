@@ -4,6 +4,7 @@ import CategoryFilter from "../components/CategoryFilter";
 import ProjectList from "../components/ProjectList";
 import WelcomeBand from "../components/WelcomeBand";
 import Fingerprint from "../Fingerprint";
+import CartSummary from "../components/CartSummary";
 
 
 function ProjectsPage() {
@@ -13,10 +14,10 @@ function ProjectsPage() {
     return (
     <>
     <div className="container mt-4">
-            {' '}
             {/* adding bootstrap. This is the overall container */}
 
-                <WelcomeBand />
+            <CartSummary/>
+            <WelcomeBand />
 
             <div className="row">
                 <div className="col-md-3">
