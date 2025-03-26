@@ -16,8 +16,16 @@ namespace WaterProject.API.Controllers
         
 //this is our routing:
         [HttpGet("AllProjects")] //give names so we can route. So this one is at /Water/AllProjects
-        public IActionResult GetProjects(int pageSize = 10, int pageNum = 1) //slug is passing this to us. If we don't get anything default 5
+        public IActionResult GetProjects(int pageSize = 10, int pageNum = 1, [FromQuery] List<string>? projectTypes = null) //slug is passing this to us. If we don't get anything giving a default
         {
+            var query = _waterContext.Projects.AsQueryable(); //different from a list, an IQueryable can be built a piece at a time and then when ready we can use it
+
+
+            //filter out anything that isn't in projectTypes
+            if (projectTypes != null && projectTypes.Any())
+            {
+                query = query.Where(p => projectTypes.Contains(p.ProjectType));
+            }
 
             string? favProjType = Request.Cookies["FavoriteProjectType"];
             Console.WriteLine("~~COOKIE~~\n" + favProjType);
@@ -32,12 +40,15 @@ namespace WaterProject.API.Controllers
             }
                 );
 
-            var something = _waterContext.Projects
+
+            var totalNumProjects = query.Count();
+
+            var something = query
                 .Skip((pageNum-1) * pageSize)
                 .Take(pageSize)
                 .ToList();
             
-            var totalNumProjects = _waterContext.Projects.Count();
+           
 
             var someObject = new //to return multiple things, we put them in an object and then return that object
             {

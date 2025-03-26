@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Project } from "./types/Project";
 
-function ProjectList() {
+function ProjectList({selectedCategories}: {selectedCategories: string[]}) {
     //we want to use the Project object to store the data as it comes in
 
     //use useState to store the Project object in an array
@@ -19,7 +19,10 @@ function ProjectList() {
 
     useEffect(() => { //useEffect only goes and gets data when needed instead of all the time
         const fetchProjects = async() => {
-            const response = await fetch(`https://localhost:5000/water/allprojects?pageSize=${pageSize}&pageNum=${pageNum}`,
+
+            const categoryParams = selectedCategories.map((cat) => `projectTypes=${encodeURIComponent(cat)}`).join('&');
+
+            const response = await fetch(`https://localhost:5000/water/allprojects?pageSize=${pageSize}&pageNum=${pageNum}${selectedCategories.length ? `&${categoryParams}` : ''}`,
                 {
                     credentials: 'include', //allows us to pass a cookie through
                 }
@@ -33,11 +36,11 @@ function ProjectList() {
 
         fetchProjects(); //call fetchProjects
 
-    }, [pageSize, pageNum, totalItems]); //This is called the dependency array. can put what to watch for when we want the useEffect to run again
+    }, [pageSize, pageNum, totalItems, selectedCategories]); //This is called the dependency array. can put what to watch for when we want the useEffect to run again
 
     return(
         <>
-            <h1>Water Projects</h1>
+            
             <br/>
 
             {projects.map((p) => //take the data and spread it out with .map. A foreach loop essentially
