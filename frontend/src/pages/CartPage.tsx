@@ -22,7 +22,7 @@ function CartPage () {
                 </ul>)  
             }
             </div>
-            <h3>Total: </h3>
+            <h3>Total:</h3>
             <button>Checkout</button>
             <button onClick={() => navigate(-1)}>Go Back</button>
             <button onClick={() => navigate('/projects')}>Continue Browsing</button>
