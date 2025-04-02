@@ -18,7 +18,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("http://localhost:3000")
+            policy.WithOrigins("http://localhost:3000", "https://happy-desert-0066ea01e.6.azurestaticapps.net/")
                 .AllowCredentials() //so that cookies will get added
                 .AllowAnyHeader() 
                 .AllowAnyMethod();
@@ -38,9 +38,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowFrontend");
-
 app.UseHttpsRedirection();
+
+app.UseCors("AllowFrontend"); //make sure this is BELOW useHTTPSredirection() 
 
 app.UseAuthorization();
 
