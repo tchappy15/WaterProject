@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Project } from "../types/Project"
-import { addProject, updateProject } from "../api/ProjectsAPI";
+import { updateProject } from "../api/ProjectsAPI";
 
 interface EditProjectFormProps {
     project: Project;
