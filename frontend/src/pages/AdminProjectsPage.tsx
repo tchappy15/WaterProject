@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { Project } from "../types/Project";
-import { fetchProjects } from "../api/ProjectsAPI";
+import { deleteProject, fetchProjects } from "../api/ProjectsAPI";
 import Pagination from "../components/Pagination";
+import NewProjectForm from "../components/NewProjectForm";
+import EditProjectForm from "../components/EditProjectForm";
 
 const AdminProjectsPage = () => {
     //use useState to store the Project object in an array
@@ -21,6 +23,10 @@ const AdminProjectsPage = () => {
 
     const [loading, setLoading] = useState(true);
 
+    const [showForm, setShowForm] = useState(false); //letting React infer the data type
+
+    const [editingProject, setEditingProject] = useState<Project | null>(null);
+
 
 useEffect(()=> {
     const loadProjects= async() => {
@@ -38,14 +44,58 @@ useEffect(()=> {
     loadProjects(); //call the function that we just created
 }, [pageSize, pageNum]);
 
+const handleDelete = async(projectId: number) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this project?')
+    if(!confirmDelete) return;
+
+    try {
+        await deleteProject(projectId);
+        setProjects(projects.filter((p) =>p.projectId !== projectId));
+    } 
+    catch (error) {
+    alert('Failed to delete project. Please try again.')
+}
+};
+
 if (loading) return <p>Loading projects...</p>
 if (error) return <p className="text-red-500">Error: {error}</p> 
 
 return ( //this return is what the page is going to look like
     <div>
         <h1>Admin - Projects</h1>
-        <table>
-        <thead>
+
+        {!showForm && (
+            <button 
+                className="btn btn-success mb-3"
+                onClick={() => setShowForm(true)}
+                >
+                    Add Project
+                </button>
+        )}
+
+        {showForm && ( //the && is saying if showForm is true, do all this stuff:
+            <NewProjectForm 
+                onSuccess={() => {
+                setShowForm(false); 
+                fetchProjects(pageSize, pageNum, []).then((data) => 
+                    setProjects(data.projects)
+            );
+        }}
+        onCancel={() => setShowForm(false)}
+        />
+    )}
+
+    {editingProject && (
+        <EditProjectForm project={editingProject} onSuccess={() => {
+            fetchProjects(pageSize, pageNum, []).then((data) => setProjects(data.projects));
+        }}
+        onCancel={() => setEditingProject(null)}
+        />
+    )}
+
+
+        <table className="table table-bordered table-striped">
+        <thead className="table-dark">
             <tr>
                 <th>ID</th>
                 <th>Name</th>
@@ -69,10 +119,12 @@ return ( //this return is what the page is going to look like
                         <td>{p.projectPhase}</td>
                         <td>{p.projectFunctionalityStatus}</td>
                         <td>
-                            <button onClick={() => console.log(`Edit project ${p.projectId}`)}>
+                            <button className="btn btn-primary btn-sm w-100 mb-1"
+                            onClick={() => setEditingProject(p)}>
                                 Edit
                             </button>
-                            <button onClick={() => console.log(`Delete project ${p.projectId}`)}>
+                            <button className="btn btn-danger btn-sm w-100"
+                            onClick={() => handleDelete(p.projectId)}>
                                 Delete
                             </button>
                         </td>
