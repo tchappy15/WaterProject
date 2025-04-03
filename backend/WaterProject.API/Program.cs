@@ -18,7 +18,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("http://localhost:3000", "https://happy-desert-0066ea01e.6.azurestaticapps.net")
+            policy.WithOrigins("http://localhost:3000", "https://agreeable-grass-0d150651e.6.azurestaticapps.net")
                 .AllowCredentials() //so that cookies will get added
                 .AllowAnyHeader() 
                 .AllowAnyMethod();
